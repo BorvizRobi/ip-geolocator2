@@ -10,6 +10,9 @@ import com.google.common.net.UrlEscapers;
 
 import org.apache.commons.io.IOUtils;
 
+import org.slf4j.Logger;
+
+import org.slf4j.LoggerFactory;
 /**
  * Class for obtaining geolocation information about an IP address or host
  * name. The class uses the <a href="http://ip-api.com/">IP-API.com</a>
@@ -55,17 +58,31 @@ public class GeoLocator {
             url = new URL(GEOLOCATOR_SERVICE_URI + ipAddrOrHost);
         } else {
             url = new URL(GEOLOCATOR_SERVICE_URI);
+
         }
         String s = IOUtils.toString(url, "UTF-8");
+
+        logger.debug("The aquired json object: {}",s);
+
         return GSON.fromJson(s, GeoLocation.class);
     }
 
+    private static Logger logger = LoggerFactory.getLogger(GeoLocator.class);
+
     public static void main(String[] args) throws IOException {
+
         try {
+
+            logger.info("User's name is {}", System.getProperty("user.name"));
+            logger.info("The used URI is {}",GEOLOCATOR_SERVICE_URI);
+
             String arg = args.length > 0 ? args[0] : null;
+            logger.debug("The args length is {}",args.length);
+
             System.out.println(new GeoLocator().getGeoLocation(arg));
+
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
